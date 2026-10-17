@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="e-Mongolia"/>
+<meta name="theme-color" content="#0066FF"/>
+<title>e-Mongolia</title>
+<link rel="icon" type="image/png" href="/icon.png"/>
+<link rel="apple-touch-icon" href="/apple-icon.png"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--blue:#0066FF;--bg:#EEF3FA;--text:#1A1A2E;--muted:#94a3b8}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;background:#111;color:var(--text);min-height:100dvh;display:flex;justify-content:center;overflow:hidden;-webkit-font-smoothing:antialiased}
+.phone{width:100%;max-width:430px;height:100dvh;background:var(--bg);position:relative;overflow:hidden;display:flex;flex-direction:column}
+
+/* PIN */
+#pin{position:absolute;inset:0;z-index:100;background:#E8F4FF;display:flex;flex-direction:column;align-items:center;padding:48px 20px 24px}
+#pin.hid{display:none}
+.pt{text-align:center;font-size:17px;font-weight:500;line-height:1.45;margin-top:40px;margin-bottom:28px}
+.pd{display:flex;gap:10px;margin-bottom:24px}
+.pdo{width:42px;height:42px;border-radius:12px;background:#e8eef5;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:600;border:2px solid transparent}
+.pdo.on{border-color:var(--blue);background:#fff}
+.pdo.f{background:#fff;border-color:#e5e7eb}
+.pl{text-align:center;margin-bottom:28px}
+.pl button{display:block;background:none;border:none;color:#6b7280;font-size:14px;margin:8px auto;cursor:pointer}
+.sk{background:var(--blue)!important;color:#fff!important;padding:10px 22px;border-radius:999px;font-weight:500;margin-top:12px!important}
+.bb{display:flex;gap:10px;width:100%;max-width:360px;margin-top:auto;margin-bottom:12px}
+.sos{background:#ef4444;color:#fff;border:none;border-radius:12px;padding:14px 16px;font-weight:600;font-size:14px;cursor:pointer}
+.face{flex:1;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:14px;font-size:15px;font-weight:500;cursor:pointer}
+.kp{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;width:100%;max-width:360px}
+.k{background:#eef2f7;border:none;border-radius:14px;height:52px;font-size:22px;font-weight:500;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.k:active{background:#dbe4f0}
+.k small{font-size:9px;color:#9ca3af;margin-top:1px}
+.k.em{background:transparent;cursor:default}
+.k.bk{background:#d1d5db;font-size:16px}
+
+/* HEADER */
+.hd{background:var(--blue);padding:12px 16px 14px;padding-top:max(12px,env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.logo{display:flex;align-items:center;gap:8px}
+.lb{background:#fff;color:#E31C23;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;font-family:Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.lt{display:flex;flex-direction:column;line-height:1.15}
+.ln{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.3px}
+.lt small{font-size:9.5px;font-weight:400;color:rgba(255,255,255,.9)}
+.hi{display:flex;gap:14px}
+.hi button{background:none;border:none;cursor:pointer;padding:4px}
+.hi svg{width:22px;height:22px}
+
+.sc{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.pg{display:none;padding-bottom:20px;min-height:100%}
+.pg.on{display:block}
+
+/* HOME grid */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+.card{background:#fff;border-radius:16px;padding:16px 12px 14px;display:flex;flex-direction:column;align-items:flex-start;gap:10px;box-shadow:0 1px 4px rgba(0,0,0,.05);cursor:pointer;border:none;text-align:left;width:100%}
+.card:active{transform:scale(.97)}
+.card .ci svg{width:44px;height:44px}
+.card .cl{font-size:13.5px;font-weight:500;line-height:1.3}
+.card.hl{background:linear-gradient(135deg,#E8F0FF,#D6E4FF)}
+.sp{padding:0 16px}
+.sh{display:flex;justify-content:space-between;align-items:center;margin:4px 0 12px}
+.sh h3{font-size:15.5px;font-weight:600}
+.sh a{font-size:13.5px;color:var(--blue);text-decoration:none;font-weight:500}
+.banner{border-radius:16px;background:linear-gradient(120deg,#14b8a6,#22d3ee 60%,#38bdf8);height:120px;display:flex;align-items:center;padding:0 18px;cursor:pointer}
+.banner .bt{color:#fff;font-size:22px;font-weight:700}
+
+/* ===== NEW PROFILE (real app style) ===== */
+.pcard{background:#fff;border-radius:16px;margin:14px 16px 12px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.prow{display:flex;align-items:center;gap:12px;cursor:pointer}
+.pphoto{width:56px;height:56px;border-radius:50%;background:#e5e7eb;overflow:visible;flex-shrink:0;position:relative}
+.pphoto img,.pphoto .ph{border-radius:50%;overflow:hidden}
+.pphoto .ph{width:100%;height:100%;background:#e5e7eb}
+.pphoto img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.pphoto .ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.pphoto .ph svg{width:28px;height:28px;opacity:.4}
+.pbadge{position:absolute;bottom:-8px;right:-10px;width:32px;height:32px;border-radius:0;border:none;background:transparent;display:flex;align-items:center;justify-content:center;z-index:3;filter:drop-shadow(0 2px 4px rgba(0,0,0,.18));pointer-events:none}
+.pbadge svg{width:32px;height:32px;display:block}
+.pinfo{flex:1;min-width:0}
+.pinfo .nm{font-size:16px;font-weight:700;color:var(--blue)}
+.pinfo .em{font-size:12.5px;color:#64748b;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pch{color:#cbd5e1;font-size:18px}
+.pstats{margin-top:12px;padding-top:12px;border-top:1px solid #f1f5f9;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pstats p{font-size:13px;color:#475569;line-height:1.4;flex:1}
+.pstats p b{color:var(--blue);font-weight:700}
+.pstats .tree{width:48px;height:48px;border-radius:50%;background:#ECFDF5;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pstats .tree svg{width:28px;height:28px}
+
+.sec{padding:8px 16px 0}
+.sec-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sec-h h3{font-size:15.5px;font-weight:600}
+.btn-sm{background:#fff;border:1px solid #e2e8f0;border-radius:999px;padding:6px 14px;font-size:13px;color:#334155;cursor:pointer;font-weight:500}
+
+/* ID carousel card */
+.id-wrap{overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.id-preview{background:linear-gradient(160deg,#fdf8ef,#f5ecd8);border-radius:14px;padding:14px;border:1px solid #e8dcc8;min-width:300px;max-width:340px;cursor:pointer;position:relative;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.id-preview img.full{width:100%;border-radius:10px;display:block}
+.id-preview .gen{display:flex;gap:10px}
+.id-preview .gen-photo{width:72px;height:90px;border-radius:4px;object-fit:cover;background:#e5e7eb;border:2px solid #fff;flex-shrink:0}
+.id-preview .gen-fields{flex:1;font-size:11px;line-height:1.35;min-width:0}
+.id-preview .gl{font-size:9px;color:#888}
+.id-preview .gv{font-weight:600;font-size:12px;margin-bottom:3px}
+.id-preview .title{font-size:10px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.id-preview .title .flg{width:20px;height:13px;border-radius:1px;background:linear-gradient(to right,#DA2032 0 33%,#0066B3 33% 66%,#DA2032 66%);flex-shrink:0}
+.id-preview .title span{display:block;font-weight:400;font-size:8px;color:#666}
+
+.btn-all{display:block;width:100%;margin:12px 0 8px;padding:12px;background:#fff;border:1.5px solid #dbeafe;border-radius:999px;color:var(--blue);font-size:14.5px;font-weight:600;cursor:pointer;text-align:center}
+
+/* Menu list */
+.ml{padding:4px 16px 16px}
+.mi{background:#fff;border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer;border:none;width:100%;text-align:left}
+.mi .mic{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mi .mic svg{width:22px;height:22px}
+.mi .mit{flex:1;font-size:14.5px;font-weight:500;color:#334155}
+.mi .ch{color:#cbd5e1;font-size:16px}
+
+/* Other pages */
+.al{padding:0 16px 16px}
+.al h3{font-size:15px;font-weight:600;margin:12px 0 10px}
+.ai{background:#fff;border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer;border:none;width:100%;text-align:left}
+.ai .aic{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.ai .ait{flex:1;font-size:14.5px;font-weight:500}
+.ai .ch{color:#c0c4cc}
+.ep{padding:16px}
+.sosb{background:#EF4444;color:#fff;border:none;border-radius:999px;padding:14px 20px;font-size:15px;font-weight:600;width:100%;display:flex;align-items:center;gap:10px;cursor:pointer;margin-bottom:16px;box-shadow:0 4px 12px rgba(239,68,68,.3)}
+.sosc{background:#fff;color:#EF4444;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:11px}
+.ps{padding:40px 24px;text-align:center;color:var(--muted)}
+.ps h3{color:var(--text);font-size:17px}
+.qr{display:flex;flex-direction:column;align-items:center;padding:48px 24px}
+.qrb{width:200px;height:200px;background:#fff;border-radius:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.08);margin-bottom:16px}
+.qr p{font-size:14px;color:var(--muted);text-align:center}
+
+/* NAV */
+.bn{background:#fff;display:flex;justify-content:space-around;align-items:flex-end;padding:6px 0 max(8px,env(safe-area-inset-bottom));box-shadow:0 -1px 10px rgba(0,0,0,.06);flex-shrink:0;z-index:40}
+.nb{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:#9ca3af;background:none;border:none;cursor:pointer;padding:4px 8px;min-width:56px}
+.nb.on{color:var(--blue)}
+.nb svg{width:24px;height:24px}
+.nq{width:52px;height:52px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;margin-top:-20px;box-shadow:0 4px 14px rgba(0,102,255,.4);border:none;cursor:pointer}
+
+/* MODALS */
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:60;display:none;align-items:flex-end;justify-content:center}
+.ov.sh{display:flex}
+.sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-height:92%;overflow-y:auto;padding:12px 18px 28px;animation:up .22s ease}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.shd{width:36px;height:4px;background:#d1d5db;border-radius:2px;margin:4px auto 12px}
+.sheet h3{text-align:center;font-size:16.5px;font-weight:600;margin-bottom:14px}
+.id-full-img{width:100%;border-radius:14px;display:block;margin-bottom:14px;cursor:pointer}
+.idf,.idb{background:linear-gradient(160deg,#fdf8ef,#f5ecd8);border-radius:14px;padding:16px;border:1px solid #e8dcc8;margin-bottom:14px;cursor:pointer;position:relative;overflow:hidden}
+.idfh{display:flex;align-items:flex-start;gap:8px;margin-bottom:12px}
+.idfl{width:28px;height:18px;border-radius:2px;flex-shrink:0;background:linear-gradient(to right,#DA2032 0 33%,#0066B3 33% 66%,#DA2032 66%)}
+.idft{font-size:11px;font-weight:700;line-height:1.25}
+.idft span{display:block;font-weight:400;font-size:9px;color:#555}
+.idfb{display:flex;gap:12px}
+.idfp{width:90px;height:112px;border-radius:4px;object-fit:cover;background:#e5e7eb;flex-shrink:0;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.idff{flex:1;font-size:12px;line-height:1.35}
+.idl{font-size:10px;color:#888;margin-top:4px}
+.idl:first-child{margin-top:0}
+.idv{font-weight:600;font-size:13px}
+.idv.e{color:#aaa;font-weight:400}
+.idbh{text-align:center;margin-bottom:12px}
+.idbh .o{font-size:12px;font-weight:600}
+.idbh .oe{font-size:9px;color:#666}
+.idbb{display:flex;gap:12px}
+.chip{width:52px;height:40px;background:linear-gradient(145deg,#f0d060,#d4a017);border-radius:8px;flex-shrink:0;position:relative}
+.chip::before{content:"";position:absolute;inset:6px;border:1.5px solid rgba(0,0,0,.15);border-radius:4px}
+.idbf{flex:1;font-size:12px}
+.idqr{width:56px;height:56px;background:#fff;border:1px solid #ddd;border-radius:4px;display:flex;align-items:center;justify-content:center;margin-top:10px}
+
+.bp{width:100%;background:var(--blue);color:#fff;border:none;border-radius:999px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:8px}
+.bp2{width:100%;background:#EFF6FF;color:var(--blue);border:none;border-radius:999px;padding:14px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:8px}
+.bx{width:100%;background:none;border:none;color:var(--muted);font-size:15px;padding:10px;cursor:pointer}
+
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:4px}
+.fg input,.fg select{width:100%;padding:11px 12px;border:1px solid #e5e7eb;border-radius:11px;font-size:15px;background:#f9fafb}
+.pr{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.ppv{width:72px;height:90px;border-radius:8px;object-fit:cover;background:#e5e7eb}
+.ub{background:#eff6ff;color:var(--blue);border:none;border-radius:10px;padding:10px 14px;font-size:13.5px;cursor:pointer;font-weight:500}
+.toast{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:10px 18px;border-radius:999px;font-size:13.5px;z-index:200;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap}
+.toast.on{opacity:1}
+input[type=file]{display:none}
+</style>
+</head>
+<body>
+<div class="phone">
+<div id="pin">
+  <div class="pt">Та пин кодоо оруулан системд<br>нэвтэрнэ үү</div>
+  <div class="pd" id="pd"><div class="pdo on"></div><div class="pdo"></div><div class="pdo"></div><div class="pdo"></div></div>
+  <div class="pl">
+    <button>Пин кодоо мартсан?</button>
+    <button>Өөр хэрэглэгчээр нэвтрэх</button>
+    <button class="sk" onclick="login()">Шууд нэвтрэх</button>
+  </div>
+  <div class="bb"><button class="sos">SOS</button><button class="face" onclick="login()">Face ID-р нэвтрэх</button></div>
+  <div class="kp" id="kp">
+    <button class="k" data-n="1">1</button><button class="k" data-n="2">2<small>ABC</small></button><button class="k" data-n="3">3<small>DEF</small></button>
+    <button class="k" data-n="4">4<small>GHI</small></button><button class="k" data-n="5">5<small>JKL</small></button><button class="k" data-n="6">6<small>MNO</small></button>
+    <button class="k" data-n="7">7<small>PQRS</small></button><button class="k" data-n="8">8<small>TUV</small></button><button class="k" data-n="9">9<small>WXYZ</small></button>
+    <div class="k em"></div><button class="k" data-n="0">0</button><button class="k bk" data-n="b">⌫</button>
+  </div>
+</div>
+
+<div class="hd" id="hd" style="display:none">
+  <div class="logo"><div class="lb">e</div><div class="lt"><span class="ln">mongolia</span><small>Цахим үндэстэн</small></div></div>
+  <div class="hi">
+    <button onclick="toast('Мэдэгдэл байхгүй')"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg></button>
+    <button onclick="toast('Мэдэгдэл байхгүй')"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
+  </div>
+</div>
+
+<div class="sc" id="sc" style="display:none">
+  <!-- HOME -->
+  <div class="pg on" id="p-home">
+    <div style="padding:16px 16px 8px">
+      <div style="font-size:20px;font-weight:700;color:#1e293b;line-height:1.35;margin-bottom:14px">Төрийн үйлчилгээ, мэдээллийг<br>нэг дороос</div>
+      <div style="background:#fff;border:1.5px solid #c7d2fe;border-radius:999px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span style="color:#94a3b8;font-size:15px">Үйлчилгээ хайх</span>
+      </div>
+      <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:8px">
+        <div style="background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.05)">☁️ Өдөр — °C</div>
+        <div style="background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.05);display:flex;align-items:center;gap:6px"><span style="background:#3B82F6;color:#fff;border-radius:6px;padding:2px 6px;font-size:11px;font-weight:700">31</span> Цагалбар</div>
+        <div style="background:#fff;border-radius:999px;padding:8px 14px;font-size:13px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,.05)">💵 3,596.30 ₮</div>
+      </div>
+    </div>
+    <div style="padding:8px 16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="font-size:16px;font-weight:600">Хөтөч</h3>
+        <span style="color:var(--blue);font-size:14px;font-weight:500;cursor:pointer" onclick="go('services')">Бүгд ›</span>
+      </div>
+      <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px">
+        <div onclick="toast('Цэргийн алба')" style="min-width:120px;height:130px;border-radius:16px;background:linear-gradient(160deg,#dbeafe,#93c5fd);padding:14px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-size:14px;font-weight:600;color:#1e3a5f">Цэргийн<br>алба</div>
+          <div style="font-size:28px">🎖️</div>
+        </div>
+        <div onclick="toast('Бичиг баримт')" style="min-width:120px;height:130px;border-radius:16px;background:linear-gradient(160deg,#ffedd5,#fdba74);padding:14px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-size:14px;font-weight:600;color:#7c2d12">Бичиг баримт</div>
+          <div style="font-size:28px">📄</div>
+        </div>
+        <div onclick="toast('Хүүхэд')" style="min-width:120px;height:130px;border-radius:16px;background:linear-gradient(160deg,#fef9c3,#fde68a);padding:14px;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="font-size:14px;font-weight:600;color:#713f12">Хүүхэд</div>
+          <div style="font-size:28px">🧩</div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:8px 16px 16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3 style="font-size:16px;font-weight:600">Санал асуулга</h3>
+        <span style="color:var(--blue);font-size:14px;font-weight:500">Бүгд ›</span>
+      </div>
+      <div onclick="toast('Санал асуулга')" style="background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.05);cursor:pointer;display:flex;gap:12px;align-items:center">
+        <div style="width:48px;height:48px;border-radius:12px;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:24px">🗳️</div>
+        <div style="flex:1">
+          <div style="font-size:12px;color:#22C55E;font-weight:600;margin-bottom:2px">Идэвхтэй</div>
+          <div style="font-size:14px;font-weight:500;line-height:1.3">"ОЮУ ТОЛГОЙН ногдол ашигтай холбоотой санал асуулга"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="pg" id="p-services">
+    <div style="padding:16px">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+        <button style="background:#FFF7ED;border:none;border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;color:#C2410C;display:flex;align-items:center;gap:6px;cursor:pointer">🔖 Хадгалсан</button>
+      </div>
+      <div style="display:flex;gap:10px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px">
+        <div style="min-width:200px;height:110px;border-radius:14px;background:linear-gradient(135deg,#1e3a5f,#3b82f6);padding:14px;color:#fff;cursor:pointer" onclick="toast('Лавлагаа')">
+          <div style="font-size:22px;font-weight:800">12 лавлагаа</div>
+          <div style="font-size:12px;opacity:.85;margin-top:4px">Цахим апостиль үйлчилгээ</div>
+        </div>
+        <div style="min-width:200px;height:110px;border-radius:14px;background:linear-gradient(135deg,#0f172a,#334155);padding:14px;color:#fff;cursor:pointer" onclick="toast('Хадгалалт')">
+          <div style="font-size:14px;font-weight:600;margin-top:20px">Кибер халдлага, хувийн мэдээлэл</div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1.5px solid #c7d2fe;border-radius:999px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:18px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.3-4.3"/></svg>
+        <span style="color:#94a3b8;font-size:15px">Үйлчилгээ хайх</span>
+      </div>
+      <h3 style="font-size:15px;font-weight:600;margin-bottom:10px">Танд зориулсан</h3>
+      <div onclick="toast('НД лавлагаа')" style="background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px">Төлбөргүй</div>
+        <div style="font-size:14.5px;font-weight:600;line-height:1.35">Нийгмийн даатгалын шимтгэл төлөлтийн лавлагаа</div>
+        <div style="font-size:12px;color:#94a3b8;margin-top:6px">Үйлчилгээ авах боломжтой суваг</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 10px">
+        <h3 style="font-size:15px;font-weight:600">Бүх үйлчилгээ</h3>
+        <span style="color:var(--blue);font-size:13px;font-weight:500">Ангилал ›</span>
+      </div>
+      <div onclick="toast('Иргэний үнэмлэх лавлагаа')" style="background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px">Төлбөргүй</div>
+        <div style="font-size:14.5px;font-weight:600">Иргэний үнэмлэхийн лавлагаа</div>
+      </div>
+      <div onclick="toast('Нотариат')" style="background:#fff;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.04);cursor:pointer">
+        <div style="font-size:11px;color:#64748b;margin-bottom:4px">Төлбөртэй</div>
+        <div style="font-size:14.5px;font-weight:600">Нотариатын үйлчилгээ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR -->
+  <div class="pg" id="p-qr">
+    <div class="qr">
+      <div class="qrb"><svg viewBox="0 0 100 100" fill="#1a1a1a" width="140" height="140"><rect x="5" y="5" width="30" height="30" rx="3"/><rect x="10" y="10" width="20" height="20" rx="1" fill="#fff"/><rect x="14" y="14" width="12" height="12"/><rect x="65" y="5" width="30" height="30" rx="3"/><rect x="70" y="10" width="20" height="20" rx="1" fill="#fff"/><rect x="74" y="14" width="12" height="12"/><rect x="5" y="65" width="30" height="30" rx="3"/><rect x="10" y="70" width="20" height="20" rx="1" fill="#fff"/><rect x="14" y="74" width="12" height="12"/><rect x="45" y="45" width="10" height="10"/></svg></div>
+      <p>QR код уншуулах<br>эсвэл харуулах</p>
+    </div>
+  </div>
+
+  <!-- EXTRA -->
+    <div class="pg" id="p-extra">
+    <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div onclick="toast('Парламент')" style="background:#fff;border-radius:16px;padding:18px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer"><div style="font-size:28px;margin-bottom:8px">🏛️</div><div style="font-size:13px;font-weight:500;line-height:1.3">Нээлттэй Парламент</div></div>
+      <div onclick="toast('Төрийн алба')" style="background:#fff;border-radius:16px;padding:18px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer"><div style="font-size:28px;margin-bottom:8px">🏢</div><div style="font-size:13px;font-weight:500;line-height:1.3">Төрийн албан хаагчийн цэс</div></div>
+      <div onclick="toast('Оюутан')" style="background:#fff;border-radius:16px;padding:18px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer"><div style="font-size:28px;margin-bottom:8px">🎓</div><div style="font-size:13px;font-weight:500;line-height:1.3">Оюутан</div></div>
+      <div onclick="toast('Ажлын байр')" style="background:#fff;border-radius:16px;padding:18px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer"><div style="font-size:28px;margin-bottom:8px">💼</div><div style="font-size:13px;font-weight:500;line-height:1.3">Ажлын байр</div></div>
+      <div onclick="toast('Тээвэр')" style="background:#fff;border-radius:16px;padding:18px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer"><div style="font-size:28px;margin-bottom:8px">🚇</div><div style="font-size:13px;font-weight:500;line-height:1.3">Нийтийн тээврийн тасалбар захиалга</div></div>
+      <div onclick="toast('11-11')" style="background:#fff;border-radius:16px;padding:18px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer"><div style="font-size:28px;margin-bottom:8px">💬</div><div style="font-size:13px;font-weight:500;line-height:1.3">11-11 төвд өргөдөл, гомдол илгээх</div></div>
+      <div onclick="toast('АТГ')" style="background:#fff;border-radius:16px;padding:18px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer"><div style="font-size:28px;margin-bottom:8px">⚖️</div><div style="font-size:13px;font-weight:500;line-height:1.3">АТГ-т хандах</div></div>
+      <div onclick="toast('Өмгөөлөгч')" style="background:#fff;border-radius:16px;padding:18px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer"><div style="font-size:28px;margin-bottom:8px">🛡️</div><div style="font-size:13px;font-weight:500;line-height:1.3">Өмгөөлөгчид хандах</div></div>
+      <div onclick="toast('Эрсдэл')" style="background:#fff;border-radius:16px;padding:18px 14px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.04);cursor:pointer"><div style="font-size:28px;margin-bottom:8px">⚠️</div><div style="font-size:13px;font-weight:500;line-height:1.3">Эрсдэл мэдэгдэх</div></div>
+    </div>
+  </div>
+
+  <div class="pg" id="p-profile">
+    <div class="pcard">
+      <div class="prow" onclick="openEdit()">
+        <div class="pphoto" onclick="event.stopPropagation();pickFace()">
+          <div class="ph" id="pph"><svg viewBox="0 0 24 24" fill="#9ca3af"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+          <img id="pimg" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:50%" alt=""/>
+          <div class="pbadge"><svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="hg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#e0c3fc"/><stop offset="30%" stop-color="#8ec5fc"/><stop offset="60%" stop-color="#a8edea"/><stop offset="100%" stop-color="#d4a5f5"/></linearGradient><linearGradient id="sy" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#1e40af"/></linearGradient></defs><path fill="url(#hg)" d="M32 4c1.8 0 3 1.5 4.4 2.2 1.5.7 3.4-.2 4.7.7 1.3.9 1.3 3 2.4 4.1 1.1 1.1 3.2 1.1 4.1 2.4.9 1.3 0 3.2.7 4.7C49.5 29 51 30.2 51 32s-1.5 3-2.2 4.4c-.7 1.5.2 3.4-.7 4.7-.9 1.3-3 1.3-4.1 2.4-1.1 1.1-1.1 3.2-2.4 4.1-1.3.9-3.2 0-4.7.7C35 49.5 33.8 51 32 51s-3-1.5-4.4-2.2c-1.5-.7-3.4.2-4.7-.7-1.3-.9-1.3-3-2.4-4.1-1.1-1.1-3.2-1.1-4.1-2.4-.9-1.3 0-3.2-.7-4.7C14.5 35 13 33.8 13 32s1.5-3 2.2-4.4c.7-1.5-.2-3.4.7-4.7.9-1.3 3-1.3 4.1-2.4 1.1-1.1 1.1-3.2 2.4-4.1 1.3-.9 3.2 0 4.7-.7C29 5.5 30.2 4 32 4z"/><g fill="url(#sy)" transform="translate(32,32) scale(0.9) translate(-20,-20)"><path d="M20 2c-.7 2-1 3.4-1 5s.6 2.7 1 2.7 1-.7 1-2.7S20.7 4 20 2z"/><ellipse cx="20" cy="8.5" rx="2.8" ry="1.6"/><rect x="11.5" y="13" width="2.8" height="15" rx=".4"/><rect x="25.7" y="13" width="2.8" height="15" rx=".4"/><rect x="16" y="15" width="8" height="8.5" rx=".7"/><circle cx="20" cy="19.2" r="2.6" fill="#93c5fd"/><path d="M20 16.6a2.6 2.6 0 010 5.2 1.3 1.3 0 000-2.6 1.3 1.3 0 000-2.6"/><rect x="16" y="24.5" width="8" height="1.2"/><path d="M17.2 26.5l2.8 3.2 2.8-3.2z"/><rect x="18.8" y="29" width="2.4" height="2"/></g></svg></div>
+        </div>
+        <div class="pinfo"><div class="nm" id="pn">Ч.Билгүүн</div><div class="em" id="pe">437528273068@e-mongolia.mn</div></div>
+        <span class="pch">›</span>
+      </div>
+      <div class="pstats">
+        <p>Та нийт <b>12</b> үйлчилгээ авч дараах<br>хөмрөлтийг хийсэн байна.</p>
+        <div class="tree"><svg viewBox="0 0 24 24" fill="#22C55E"><path d="M12 2L8 8h3v4H7l5 8 5-8h-4V8h3z"/><rect x="11" y="18" width="2" height="4" fill="#166534"/></svg></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-h"><h3>Миний бичиг баримтууд</h3><button class="btn-sm" onclick="toast('Шинэчлэгдлээ')">Шинэчлэх</button></div>
+      <div class="id-wrap">
+        <div class="id-preview" id="id-preview" onclick="openId()">
+          <img class="full" id="id-thumb-full" style="display:none" alt=""/>
+          <div class="gen" id="id-thumb-gen">
+            <div>
+              <div class="title"><div class="flg"></div><div>МОНГОЛ УЛСЫН ИРГЭНИЙ ҮНЭМЛЭХ<span>CITIZEN IDENTITY CARD OF MONGOLIA</span></div></div>
+              <div style="display:flex;gap:10px">
+                <img class="gen-photo" id="mp" style="display:none" alt=""/>
+                <div id="mp-ph" class="gen-photo" style="display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="24" height="24" fill="#bbb"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+                <div class="gen-fields">
+                  <div class="gl">Овог</div><div class="gv" id="tf">---</div>
+                  <div class="gl">Эцэг/эхийн нэр</div><div class="gv" id="ts">---</div>
+                  <div class="gl">Нэр</div><div class="gv" id="tg">---</div>
+                  <div class="gl">Регистр</div><div class="gv" id="tr">---</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-all" onclick="openId()">Бүх бичиг баримтыг харах</button>
+    </div>
+    <div class="ml">
+      <button class="mi" onclick="toast('Төрд байгаа')"><div class="mic" style="background:#FFF1E8"><svg viewBox="0 0 48 48" width="28" height="28"><rect x="6" y="12" width="30" height="24" rx="3" fill="#F97316"/><circle cx="30" cy="28" r="10" fill="#FED7AA"/><circle cx="30" cy="26" r="4" fill="#F97316"/><path d="M22 36c0-4 3.5-7 8-7s8 3 8 7" fill="#F97316"/></svg></div><div class="mit">Төрд байгаа миний мэдээлэл</div><span class="ch">›</span></button>
+      <button class="mi" onclick="toast('Цахим хэтэвч')"><div class="mic" style="background:#E8F4FF"><svg viewBox="0 0 48 48" width="28" height="28"><rect x="4" y="12" width="40" height="26" rx="5" fill="#3B82F6"/><rect x="4" y="12" width="40" height="8" fill="#1D4ED8"/><rect x="28" y="24" width="12" height="8" rx="2" fill="#93C5FD"/></svg></div><div class="mit">Цахим хэтэвч</div><span class="ch">›</span></button>
+      <button class="mi" onclick="toast('Түүх')"><div class="mic" style="background:#EEF6FF"><svg viewBox="0 0 48 48" width="28" height="28"><path d="M12 6h18l8 8v26a3 3 0 01-3 3H12a3 3 0 01-3-3V9a3 3 0 013-3z" fill="#fff" stroke="#CBD5E1"/><circle cx="34" cy="34" r="9" fill="#3B82F6"/><path d="M34 29v5l3 2" stroke="#fff" stroke-width="2" fill="none"/></svg></div><div class="mit">Үйлчилгээний түүх</div><span class="ch">›</span></button>
+      <button class="mi" onclick="toast('Шуудан')"><div class="mic" style="background:#FFF1E8"><svg viewBox="0 0 48 48" width="28" height="28"><path d="M6 16h36v20a3 3 0 01-3 3H9a3 3 0 01-3-3V16z" fill="#F97316"/><path d="M6 16l18 12L42 16" fill="#FED7AA"/></svg></div><div class="mit">Үндэсний шуудан</div><span class="ch">›</span></button>
+      <button class="mi" onclick="toast('Талархал')"><div class="mic" style="background:#F3E8FF"><svg viewBox="0 0 48 48" width="28" height="28"><rect x="8" y="10" width="32" height="28" rx="4" fill="#8B5CF6"/><circle cx="36" cy="36" r="8" fill="#F59E0B"/></svg></div><div class="mit">Талархал</div><span class="ch">›</span></button>
+      <button class="mi" onclick="toast('Санал')"><div class="mic" style="background:#E8F4FF"><svg viewBox="0 0 48 48" width="28" height="28"><path d="M10 6h20l8 8v26a3 3 0 01-3 3H10a3 3 0 01-3-3V9a3 3 0 013-3z" fill="#3B82F6"/><circle cx="34" cy="34" r="9" fill="#22C55E"/><path d="M30 34l3 3 5-5" stroke="#fff" stroke-width="2.5" fill="none"/></svg></div><div class="mit">Санал асуулга</div><span class="ch">›</span></button>
+      <button class="mi" onclick="toast('Өргөдөл')"><div class="mic" style="background:#E8F4FF"><svg viewBox="0 0 48 48" width="28" height="28"><path d="M10 6h20l8 8v26a3 3 0 01-3 3H10a3 3 0 01-3-3V9a3 3 0 013-3z" fill="#3B82F6"/><circle cx="34" cy="34" r="9" fill="#F97316"/></svg></div><div class="mit">Өргөдөл, гомдол</div><span class="ch">›</span></button>
+      <button class="mi" onclick="toast('Эрсдэл')"><div class="mic" style="background:#FEF2F2"><svg viewBox="0 0 48 48" width="28" height="28"><path d="M10 6h20l8 8v26a3 3 0 01-3 3H10a3 3 0 01-3-3V9a3 3 0 013-3z" fill="#fff" stroke="#FECACA"/><circle cx="34" cy="34" r="9" fill="#EF4444"/><path d="M34 30v5M34 37.5h.01" stroke="#fff" stroke-width="2.5"/></svg></div><div class="mit">Эрсдэлийн түүх</div><span class="ch">›</span></button>
+      <button class="mi" onclick="toast('Баталгаа')"><div class="mic" style="background:#E8F4FF"><svg viewBox="0 0 48 48" width="28" height="28"><path d="M24 4L8 10v12c0 10 7 18 16 21 9-3 16-11 16-21V10L24 4z" fill="#3B82F6"/><path d="M18 24l4 4 8-8" stroke="#fff" stroke-width="3" fill="none"/></svg></div><div class="mit">Баталгаажуулалт</div><span class="ch">›</span></button>
+      <button class="mi" onclick="logout()"><div class="mic" style="background:#FEF2F2"><svg viewBox="0 0 48 48" width="28" height="28"><circle cx="20" cy="24" r="14" fill="#EF4444"/><path d="M28 24h12" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/><path d="M36 20l4 4-4 4" stroke="#1E293B" stroke-width="2.5" fill="none"/></svg></div><div class="mit">Системээс гарах</div><span class="ch">›</span></button>
+    </div>
+  </div>
+</div>
+
+<nav class="bn" id="bn" style="display:none">
+  <button class="nb on" data-t="home" onclick="go('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path d="M9 21V12h6v9"/></svg>Нүүр</button>
+  <button class="nb" data-t="services" onclick="go('services')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z"/><path d="M14 2v6h6"/></svg>Үйлчилгээ</button>
+  <button class="nq" onclick="go('qr')"><svg viewBox="0 0 24 24" fill="#fff" width="24" height="24"><path d="M3 3h7v7H3V3zm2 2v3h3V5H5zm9-2h7v7h-7V3zm2 2v3h3V5h-3zM3 14h7v7H3v-7zm2 2v3h3v-3H5zm11-2h1v2h-1v-2zm3 0h2v1h-2v-1zm-3 3h1v1h-1v-1zm2 0h3v3h-1v-2h-2v-1zm-2 2h1v2h-1v-2zm3 1h2v2h-2v-2z"/></svg></button>
+  <button class="nb" data-t="extra" onclick="go('extra')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>Нэмэлт</button>
+  <button class="nb" data-t="profile" onclick="go('profile')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Профайл</button>
+</nav>
+
+<!-- ID MODAL -->
+<div class="ov" id="ido">
+  <div class="sheet">
+    <div class="shd"></div>
+    <h3>Иргэний үнэмлэх</h3>
+    <img id="id-custom-front" class="id-full-img" style="display:none" alt="" onclick="onIdTap()"/>
+    <img id="id-custom-back" class="id-full-img" style="display:none" alt="" onclick="onIdTap()"/>
+    <div id="idf" onclick="onIdTap()">
+      <div class="idf">
+        <div class="idfh"><div class="idfl"></div><div class="idft">МОНГОЛ УЛСЫН ИРГЭНИЙ ҮНЭМЛЭХ<span>CITIZEN IDENTITY CARD OF MONGOLIA</span></div></div>
+        <div class="idfb">
+          <img class="idfp" id="idp" style="display:none" alt=""/>
+          <div class="idfp" id="idph" style="display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" width="28" height="28" fill="#bbb"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg></div>
+          <div class="idff">
+            <div class="idl">Овог Family name</div><div class="idv e" id="ff">---</div>
+            <div class="idl">Эцэг/эх/-ийн нэр Surname</div><div class="idv e" id="fs">---</div>
+            <div class="idl">Нэр Given name</div><div class="idv e" id="fg">---</div>
+            <div class="idl">Хүйс Sex</div><div class="idv e" id="fx">---</div>
+            <div class="idl">Төрсөн он, сар, өдөр</div><div class="idv e" id="fd">---</div>
+            <div class="idl">Иргэний бүртгэлийн дугаар</div><div class="idv e" id="fr">---</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="idb" style="display:none" onclick="onIdTap()">
+      <div class="idb">
+        <div class="idbh"><div class="o">Улсын Бүртгэлийн Ерөнхий Газар</div><div class="oe">The General Authority for State Registration</div></div>
+        <div class="idbb">
+          <div class="chip"></div>
+          <div class="idbf">
+            <div class="idl">Олгосон он, сар, өдөр</div><div class="idv" id="bi">2023-03-09</div>
+            <div class="idl">Хүчинтэй хугацаа</div><div class="idv" id="be">2032-02-27</div>
+          </div>
+        </div>
+        <div class="idqr"><svg viewBox="0 0 40 40" fill="#1a1a1a" width="40" height="40"><rect width="12" height="12" rx="1"/><rect x="2" y="2" width="8" height="8" fill="#fff"/><rect x="3.5" y="3.5" width="5" height="5"/><rect x="28" width="12" height="12" rx="1"/><rect x="30" y="2" width="8" height="8" fill="#fff"/><rect x="31.5" y="3.5" width="5" height="5"/><rect y="28" width="12" height="12" rx="1"/><rect x="2" y="30" width="8" height="8" fill="#fff"/><rect x="3.5" y="31.5" width="5" height="5"/></svg></div>
+      </div>
+    </div>
+    <button class="bp" onclick="toast('Лавлагаа илгээгдлээ')">Лавлагаа авах</button>
+    <button class="bp2" onclick="toast('Дахин захиалга илгээгдлээ')">Дахин захиалах</button>
+    <button class="bx" onclick="closeId()">Хаах</button>
+  </div>
+</div>
+
+<!-- EDIT -->
+<div class="ov" id="edo">
+  <div class="sheet">
+    <div class="shd"></div>
+    <h3>Мэдээлэл засах</h3>
+    <div class="pr">
+      <img id="epv" class="ppv" src="" alt=""/>
+      <button class="ub" onclick="pickFace()">Зураг солих</button>
+    </div>
+    <div class="fg"><label>Профайл нэр</label><input id="en" type="text"/></div>
+    <div class="fg"><label>И-мэйл</label><input id="ee" type="text"/></div>
+    <div class="fg"><label>Овог</label><input id="ef" type="text"/></div>
+    <div class="fg"><label>Эцэг/эхийн нэр</label><input id="es" type="text"/></div>
+    <div class="fg"><label>Нэр</label><input id="eg" type="text"/></div>
+    <div class="fg"><label>Хүйс</label><select id="ex"><option value="">—</option><option value="Эрэгтэй">Эрэгтэй</option><option value="Эмэгтэй">Эмэгтэй</option></select></div>
+    <div class="fg"><label>Төрсөн огноо</label><input id="ed" type="text" placeholder="2000-02-27"/></div>
+    <div class="fg"><label>Регистр</label><input id="er" type="text"/></div>
+    <div class="fg"><label>Олгосон</label><input id="ei" type="text"/></div>
+    <div class="fg"><label>Хүчинтэй</label><input id="ey" type="text"/></div>
+    <div class="fg"><label>Бүтэн урд тал (ID зураг)</label><button class="ub" style="width:100%" onclick="pickCard('front')">Урд тал оруулах</button></div>
+    <div class="fg"><label>Бүтэн ард тал (ID зураг)</label><button class="ub" style="width:100%" onclick="pickCard('back')">Ард тал оруулах</button></div>
+    <button class="bp" onclick="saveE()">Хадгалах</button>
+    <button class="bx" onclick="closeE()">Хаах</button>
+  </div>
+</div>
+
+<input type="file" id="fi" accept="image/*" onchange="onP(event)"/>
+<input type="file" id="fi-front" accept="image/*" onchange="onCard(event,'front')"/>
+<input type="file" id="fi-back" accept="image/*" onchange="onCard(event,'back')"/>
+<div class="toast" id="to"></div>
+</div>
+<script>
+const K="emongolia_v7",D={name:"Ч.Билгүүн",email:"437528273068@e-mongolia.mn",family:"",surname:"",given:"",sex:"",dob:"",reg:"",issue:"2023-03-09",expiry:"2032-02-27",photo:"",idFront:"",idBack:""};
+let data=(()=>{try{const r=localStorage.getItem(K);if(r)return{...D,...JSON.parse(r)}}catch(e){}return{...D}})(),pin="",flipped=false;
+function persist(){localStorage.setItem(K,JSON.stringify(data))}
+
+document.getElementById("kp").addEventListener("click",e=>{
+  const b=e.target.closest(".k");if(!b)return;const n=b.dataset.n;
+  if(n==="b")pin=pin.slice(0,-1);else if(n!=null&&pin.length<4)pin+=n;
+  document.querySelectorAll(".pdo").forEach((d,i)=>{d.classList.remove("on","f");d.textContent="";if(i<pin.length){d.classList.add("f");d.textContent=pin[i]}else if(i===pin.length)d.classList.add("on")});
+  if(pin.length===4)setTimeout(login,160);
+});
+function login(){
+  document.getElementById("pin").classList.add("hid");
+  document.getElementById("hd").style.display="flex";
+  document.getElementById("sc").style.display="block";
+  document.getElementById("bn").style.display="flex";
+  sessionStorage.setItem("em7","1");render();
+}
+function logout(){
+  sessionStorage.removeItem("em7");
+  sessionStorage.removeItem("lock_face");
+  sessionStorage.removeItem("lock_front");
+  sessionStorage.removeItem("lock_back");
+  document.getElementById("pin").classList.remove("hid");
+  document.getElementById("hd").style.display="none";
+  document.getElementById("sc").style.display="none";
+  document.getElementById("bn").style.display="none";
+  pin="";document.querySelectorAll(".pdo").forEach((d,i)=>{d.classList.remove("on","f");d.textContent="";if(i===0)d.classList.add("on")});
+}
+if(sessionStorage.getItem("em7")==="1")login();
+
+function go(t){
+  document.querySelectorAll(".pg").forEach(s=>s.classList.remove("on"));
+  const el=document.getElementById("p-"+t);if(el)el.classList.add("on");
+  document.querySelectorAll(".nb").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+}
+function setV(id,v){const el=document.getElementById(id);if(!el)return;if(v){el.textContent=v;el.classList.remove("e")}else{el.textContent="---";el.classList.add("e")}}
+function setT(id,v){const el=document.getElementById(id);if(el)el.textContent=v||"---"}
+
+function render(){
+  document.getElementById("pn").textContent=data.name;
+  document.getElementById("pe").textContent=data.email;
+  const img=document.getElementById("pimg"),ph=document.getElementById("pph");
+  const idp=document.getElementById("idp"),idph=document.getElementById("idph");
+  const mp=document.getElementById("mp"),mpPh=document.getElementById("mp-ph");
+  const ep=document.getElementById("epv");
+  const thumbFull=document.getElementById("id-thumb-full"),thumbGen=document.getElementById("id-thumb-gen");
+
+  if(data.photo){
+    img.src=data.photo;img.style.display="block";ph.style.display="none";
+    idp.src=data.photo;idp.style.display="block";idph.style.display="none";
+    mp.src=data.photo;mp.style.display="block";mpPh.style.display="none";
+    if(ep)ep.src=data.photo;
+  }else{
+    img.style.display="none";ph.style.display="flex";
+    idp.style.display="none";idph.style.display="flex";
+    mp.style.display="none";mpPh.style.display="flex";
+  }
+  if(data.idFront&&thumbFull&&thumbGen){
+    thumbFull.src=data.idFront;thumbFull.style.display="block";thumbGen.style.display="none";
+  }else if(thumbFull&&thumbGen){
+    thumbFull.style.display="none";thumbGen.style.display="flex";
+  }
+  setV("ff",data.family);setV("fs",data.surname);setV("fg",data.given);setV("fx",data.sex);setV("fd",data.dob);setV("fr",data.reg);
+  setT("tf",data.family);setT("ts",data.surname);setT("tg",data.given);setT("tr",data.reg);
+  document.getElementById("bi").textContent=data.issue||"---";
+  document.getElementById("be").textContent=data.expiry||"---";
+}
+
+function onP(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{data.photo=ev.target.result;sessionStorage.setItem("lock_face","1");persist();render();toast("Зураг хадгалагдлаа ✓")};r.readAsDataURL(f);e.target.value=""}
+function onCard(e,side){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{if(side==="front"){data.idFront=ev.target.result;sessionStorage.setItem("lock_front","1")}else{data.idBack=ev.target.result;sessionStorage.setItem("lock_back","1")}persist();render();showIdSide();toast(side==="front"?"Урд тал хадгалагдлаа ✓":"Ард тал хадгалагдлаа ✓")};r.readAsDataURL(f);e.target.value=""}
+
+function pickFace(){
+  if(sessionStorage.getItem("lock_face")==="1"&&data.photo){toast("Түгжигдсэн. App-аас гарч орж солино");return}
+  document.getElementById("fi").click();
+}
+function pickCard(side){
+  if(side==="front"){
+    if(sessionStorage.getItem("lock_front")==="1"&&data.idFront){toast("Түгжигдсэн. App-аас гарч орж солино");return}
+    document.getElementById("fi-front").click();
+  }else{
+    if(sessionStorage.getItem("lock_back")==="1"&&data.idBack){toast("Түгжигдсэн. App-аас гарч орж солино");return}
+    document.getElementById("fi-back").click();
+  }
+}
+
+function openId(){flipped=false;showIdSide();document.getElementById("ido").classList.add("sh")}
+function closeId(){document.getElementById("ido").classList.remove("sh")}
+function onIdTap(){
+  const hasFront=!!data.idFront, hasBack=!!data.idBack;
+  const lockF=sessionStorage.getItem("lock_front")==="1";
+  const lockB=sessionStorage.getItem("lock_back")==="1";
+  // Both set (or both locked): only toggle
+  if(hasFront && hasBack){
+    flipped=!flipped;showIdSide();return;
+  }
+  // Currently showing front
+  if(!flipped){
+    if(!hasFront){ pickCard("front"); return; }
+    // front exists, go to back side
+    flipped=true;showIdSide();
+    // if back not set yet, open picker for back
+    if(!hasBack && lockB!==true){ setTimeout(()=>pickCard("back"), 200); }
+    return;
+  }
+  // Currently showing back
+  if(!hasBack){ pickCard("back"); return; }
+  // back exists, go to front
+  flipped=false;showIdSide();
+}
+function showIdSide(){
+  const genF=document.getElementById("idf"),genB=document.getElementById("idb");
+  const custF=document.getElementById("id-custom-front"),custB=document.getElementById("id-custom-back");
+  if(!flipped){
+    if(data.idFront){custF.src=data.idFront;custF.style.display="block";genF.style.display="none";custB.style.display="none";genB.style.display="none"}
+    else{custF.style.display="none";genF.style.display="block";custB.style.display="none";genB.style.display="none"}
+  }else{
+    if(data.idBack){custB.src=data.idBack;custB.style.display="block";genB.style.display="none";custF.style.display="none";genF.style.display="none"}
+    else{custB.style.display="none";genB.style.display="block";custF.style.display="none";genF.style.display="none"}
+  }
+}
+
+function openEdit(){
+  document.getElementById("en").value=data.name;document.getElementById("ee").value=data.email;
+  document.getElementById("ef").value=data.family;document.getElementById("es").value=data.surname;
+  document.getElementById("eg").value=data.given;document.getElementById("ex").value=data.sex;
+  document.getElementById("ed").value=data.dob;document.getElementById("er").value=data.reg;
+  document.getElementById("ei").value=data.issue;document.getElementById("ey").value=data.expiry;
+  document.getElementById("epv").src=data.photo||"";document.getElementById("edo").classList.add("sh");
+}
+function closeE(){document.getElementById("edo").classList.remove("sh")}
+function saveE(){
+  data.name=document.getElementById("en").value.trim()||data.name;
+  data.email=document.getElementById("ee").value.trim()||data.email;
+  data.family=document.getElementById("ef").value.trim();data.surname=document.getElementById("es").value.trim();
+  data.given=document.getElementById("eg").value.trim();data.sex=document.getElementById("ex").value;
+  data.dob=document.getElementById("ed").value.trim();data.reg=document.getElementById("er").value.trim();
+  data.issue=document.getElementById("ei").value.trim()||data.issue;data.expiry=document.getElementById("ey").value.trim()||data.expiry;
+  persist();render();closeE();toast("Хадгалагдлаа ✓");
+}
+function toast(m){const t=document.getElementById("to");t.textContent=m;t.classList.add("on");setTimeout(()=>t.classList.remove("on"),1800)}
+document.getElementById("ido").addEventListener("click",e=>{if(e.target.id==="ido")closeId()});
+document.getElementById("edo").addEventListener("click",e=>{if(e.target.id==="edo")closeE()});
+</script>
+</body>
+</html>
